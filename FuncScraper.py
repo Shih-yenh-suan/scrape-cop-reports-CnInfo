@@ -99,7 +99,7 @@ def process_announcements(i):
     if secCode == None:
         secCode = i['orgId'][5:11]
     # 处理文件后缀
-    file_type = 'html' if i['adjunctType'] == None else 'pdf'
+    file_sub = 'html' if i['adjunctType'] == None else 'pdf'
     # 整合文件名
     # fileName：保存到本地的文件名
     # fileShortName：输出打印时显示的名字
@@ -112,10 +112,10 @@ def process_announcements(i):
         seYear = str(int(announcementTime[0:4])
                      ) if seYear is None else seYear.group()
         fileShortName = f'{secCode}_{seYear}_{secName}'
-        fileName = f'{fileShortName}_{title}_{announcementTime}.{file_type}'
+        fileName = f'{fileShortName}_{title}_{announcementTime}.{file_sub}'
     else:
         fileShortName = f'{secCode}_{announcementTime}_{secName}'
-        fileName = f'{fileShortName}_{title}.{file_type}'
+        fileName = f'{fileShortName}_{title}.{file_sub}'
 
     # 接下来开始执行下载前的判断
 
