@@ -171,7 +171,7 @@ def process_announcements(i):
             file_time = datetime.datetime.strptime(
                 announcementTime, "%Y-%m-%d") - datetime.timedelta(days=1)
             # # 如果日期更新，则下载，否则不下载
-            if file_time > latest_announcement_time:
+            if abs(file_time - latest_announcement_time) <= 1:
                 print(
                     f'{fileShortName}：\t有新版不下载:{str(latest_announcement_time)[:10]}')
                 return
