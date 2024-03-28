@@ -1,19 +1,16 @@
-file_type = "A股社会责任"
-cnInfoColumn = "szse"
-cnInfoCategory = ""
-
-root_file_path = "E:\[待整理]Source_for_sale"
-
-使用关键词而非巨潮分类 = 1  # 0：不含关键词
-开启报告不允许年度重复 = 1
-
-
-start_date = '2023-12-01'  # 起始日期。默认为2000-01-01
-end_date = None  # 默认为今天
-interval = 20  # 起始日期和结束日期之间的间隔。
-reverseInterval = 1
-
-ifMultiThread = 1
+customer_req = {
+    "file_type": "A股社会责任",
+    "cnInfoColumn": "szse",
+    "cnInfoCategory": "",
+    "root_file_path": "E:\[待整理]Source_for_sale",
+    "使用关键词而非巨潮分类": 1,
+    "开启报告不允许年度重复": 1,
+    "start_date": "2023-12-01",  # 起始日期。默认为2000-01-01,
+    "end_date": None,  # 结束日期。默认为今天
+    "interval": 20,  # 起始日期和结束日期之间的间隔。
+    "reverseInterval": 1,
+    "ifMultiThread": 1,
+}
 
 """
 解释：
@@ -33,7 +30,7 @@ root_file_path：
     指定下载文件的保存路径为 root_file_path\file_type，同时有
     下载文件的记录表，保存路径为 root_file_path\file_type\file_type.txt
 
-开启包含关键词：
+使用关键词而非巨潮分类：
     这个数据用于指定在爬取时是按照巨潮分类爬取还是按照人工提供的关键词爬取
     0：不含关键词，此时使用巨潮提供的 category 参数获取下载列表
     1：包含关键词，此时使用人工提供的 SEARCH_KEY_LIST 组成搜索关键词，这个表在constant.py中
