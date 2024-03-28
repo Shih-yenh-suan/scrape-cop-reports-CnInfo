@@ -1,25 +1,26 @@
-file_type = "A股年报"
+file_type = "A股社会责任"
 cnInfoColumn = "szse"
 cnInfoCategory = ""
 
 root_file_path = "E:\[待整理]Source_for_sale"
 
-开启包含关键词 = 0  # 0：不含关键词
+使用关键词而非巨潮分类 = 1  # 0：不含关键词
 开启报告不允许年度重复 = 1
 
-start_date = '2023-02-01'  # 起始日期。默认为2000-01-01
+
+start_date = '2023-12-01'  # 起始日期。默认为2000-01-01
 end_date = None  # 默认为今天
-interval = 2  # 起始日期和结束日期之间的间隔。
+interval = 20  # 起始日期和结束日期之间的间隔。
 reverseInterval = 1
 
-ifMultiThread = 0
+ifMultiThread = 1
 
 """
 解释：
 
 file_type：
     指定报告文件的类型。目前有：
-    A股一季报、A股年度报告、A股半年报、A股一季报、A股三季报、A股业绩报告、三板年度报告
+    A股一季报 、 A股年报 、 A股半年报 、 A股三季报 、 A股业绩报告 、 三板年度报告
     选择上述内容后，将自动填充 DATA 参数中的 板块 和 巨潮分类
     如果需要新增，则需要在 cnInfoColumn、和 cnInfoCategory 中添加相应的信息
 
