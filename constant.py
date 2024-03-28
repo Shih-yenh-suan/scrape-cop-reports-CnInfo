@@ -197,20 +197,76 @@ STOP_WORDS_DICT = {
                    '取消'],
 }
 
-SEARCH_KEY_LIST = {
-    "A股招股书": ['招股说明书', '招股意向书'],
-    "A股年报": ['年度报告', '年报'],
-    "A股社会责任": ['社会责任', '环境报告书', 'ESG', '管治', '治理', '可持续发展'],
-    "三板年报": ['年度报告', '年报'],
-    "A股问询函": ['问询', '回复', '回函'],
-    "A股一季报": ['一季度']
-}
-
-CATEGORY_AND_NAME = {
-    "A股年报": ['category_ndbg_szsh', 'szse'],
-    "A股半年报": ['category_bndbg_szsh', 'szse'],
-    "A股一季报": ['category_yjdbg_szsh', 'szse'],
-    "A股三季报": ['category_sjdbg_szsh', 'szse'],
-    "A股业绩报告": ['category_yjygjxz_szsh', 'szse'],
-    "三板年度报告": ['category_dqgg', 'third']
+FILE_INFO_JSON = {
+    """
+    解释：
+    "search_keys": 检索关键词，当 使用关键词而非巨潮分类 为 1 时启用
+    "is_duplicate_not_allowed": 1：不允许企业-年度样本有重复，0 反之
+    "cn_info_column": 巨潮板块
+    "cn_info_category": 巨潮分类
+    "stopwords_list": 选择的停用词模块
+    """
+    "A股年报": {
+        "search_keys": ["年度报告", "年报"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "szse",
+        "cn_info_category": "category_ndbg_szsh",
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+    },
+    "A股一季报": {
+        "search_keys": ["一季度"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "szse",
+        "cn_info_category": "category_yjdbg_szsh",
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+    },
+    "A股半年报": {
+        "search_keys": ["半年"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "szse",
+        "cn_info_category": "category_bndbg_szsh",
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+    },
+    "A股三季报": {
+        "search_keys": ["三季度"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "szse",
+        "cn_info_category": "category_sjdbg_szsh",
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+    },
+    "A股社会责任": {
+        "search_keys": ["社会责任", "环境报告书", "ESG", "管治", "治理", "可持续发展"],
+        "is_duplicate_not_allowed": 0,
+        "cn_info_column": "szse",
+        "cn_info_category": "",
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+    },
+    "三板年报": {
+        "search_keys": ["年度报告", "年报"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "third",
+        "cn_info_category": "category_dqgg",
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+    },
+    "A股问询函": {
+        "search_keys": ["问询", "回复", "回函"],
+        "is_duplicate_not_allowed": 0,
+        "cn_info_column": "szse",
+        "cn_info_category": "",
+        "stopwords_list": STOP_WORDS_DICT["wenxun_sw"]
+    },
+    "A股招股书": {
+        "search_keys": ["招股说明书", "招股意向书"],
+        "is_duplicate_not_allowed": 0,
+        "cn_info_column": "szse",
+        "cn_info_category": "",
+        "stopwords_list": STOP_WORDS_DICT["zhaogu_sw"]
+    },
+    "A股业绩报告": {
+        "search_keys": ["预告", "快报"],
+        "is_duplicate_not_allowed": 0,
+        "cn_info_column": "szse",
+        "cn_info_category": "category_yjygjxz_szsh",
+        "stopwords_list": STOP_WORDS_DICT["yugao_sw"]
+    },
 }

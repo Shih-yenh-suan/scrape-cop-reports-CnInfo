@@ -10,39 +10,27 @@ from config import *
 from constant import *
 from utils import *
 
-# customer_req = {
-#     "file_type": "A股社会责任",
-#     "cnInfoColumn": "szse",
-#     "cnInfoCategory": "",
-#     "root_file_path": "E:\[待整理]Source_for_sale",
-#     "使用关键词而非巨潮分类": 1,
-#     "开启报告不允许年度重复": 1,
-#     "start_date": "2023-12-01",  # 起始日期。默认为2000-01-01,
-#     "end_date": None,  # 结束日期。默认为今天
-#     "interval": 20,  # 起始日期和结束日期之间的间隔。
-#     "reverseInterval": 1,
-#     "ifMultiThread": 1,
-# }
-
 
 class FuncScraper:
     def __init__(self, customer_req):
         self.file_type = customer_req["file_type"]
-        self.cnInfoColumn = customer_req["cnInfoColumn"]
-        self.cnInfoCategory = customer_req["cnInfoCategory"]
         self.root_file_path = customer_req["root_file_path"]
         self.使用关键词而非巨潮分类 = customer_req["使用关键词而非巨潮分类"]
-        self.开启报告不允许年度重复 = customer_req["开启报告不允许年度重复"]
         self.start_date = customer_req["start_date"]
         self.end_date = customer_req["end_date"]
         self.interval = customer_req["interval"]
         self.reverseInterval = customer_req["reverseInterval"]
         self.ifMultiThread = customer_req["ifMultiThread"]
+        self.is_duplicate_not_allowed = FILE_INFO_JSON["file_type"]["is_duplicate_not_allowed"]
+        self.cnInfoColumn = FILE_INFO_JSON["file_type"]["cn_info_column"]
+        self.cnInfoCategory = FILE_INFO_JSON["file_type"]["cn_info_category"]
 
     def process_page_for_downloads(self, pageNum):
         """处理指定页码的公告信息并下载相关文件"""
-        fill_params(DATA, CATEGORY_AND_NAME, pageNum, self.file_type,
-                    self.cnInfoColumn, self.cnInfoCategory, self.使用关键词而非巨潮分类)
+        DATA['pageNum'] = pageNum
+        DATA['column'] = self.cnInfoColumn
+        if self.使用关键词而非巨潮分类 == 0:
+            DATA['category'] = self.cnInfoCategory
         # 向网站获取内容和总页数，必须分开获取，否则容易报错
         result = retry_on_failure(lambda:
                                   requests.post(URL, data=DATA, headers=HEADERS).json()['announcements'])
@@ -99,8 +87,8 @@ class FuncScraper:
             csr_tag = get_CSR_tag(title)
             fileShortName = rf'{secCode}_{seYear}_{csr_tag}_{secName}'
             fileName = rf'{fileShortName}_{title}_{announcementTime}.{file_suffix}'
-        elif self.开启报告不允许年度重复 == 1:
-            # 开启报告不允许年度重复时，用企业-年份作为主键
+        elif self.is_duplicate_not_allowed == 1:
+            # is_duplicate_not_allowed时，用企业-年份作为主键
             # 默认从标题中检索年份数据，
             # 如果标题中没说，就从发布日期中减1
             # 因为一年发布一份的报告一般是次年更新，所以年份减1
@@ -112,13 +100,13 @@ class FuncScraper:
 
         # 接下来开始执行下载前的判断
         # 1. 对于标题包含停用词的报告，跳过下载
-        if any(re.search(k, title) for k in get_stopwords(self.file_type, STOP_WORDS_DICT)):
+        if any(re.search(k, title) for k in FILE_INFO_JSON[self.file_type]["stopwords_list"]):
             print(f'{fileShortName}：\t包括停用词 ({title})')
             return
 
         # 2. 如果要求标题中带有关键词，则跳过下载不包含关键词的报告
         if self.使用关键词而非巨潮分类 == 1:
-            if not any(re.search(k, title) for k in SEARCH_KEY_LIST[self.file_type]):
+            if not any(re.search(k, title) for k in FILE_INFO_JSON[customer_req["file_type"]]["search_keys"]):
                 print(f'{fileShortName}：\t不含关键词 ({title})')
                 return
 
@@ -144,7 +132,7 @@ class FuncScraper:
                 return
 
         # 5. 在不允许年度重复的情况下，对于没有记录但是已经有同一代码、同一时间报告的文件，比对日期，如果日期更新则下载，否则不下载
-        if self.开启报告不允许年度重复 == 1:
+        if self.is_duplicate_not_allowed == 1:
             compare_latest_report(
                 downloaded_files, announcementTime, fileShortName)
         # 6. 一切都符合要求，分块下载文件，并只在下载完成后才保存到本地

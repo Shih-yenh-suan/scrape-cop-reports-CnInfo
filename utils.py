@@ -3,21 +3,6 @@ import time
 import re
 
 
-def get_stopwords(file_type, stop_words_dict):
-    """确定停词列表，默认使用 normal_sw 停用词"""
-    if file_type == "A股问询函":
-        STOP_WORDS = stop_words_dict["wenxun_sw"]
-    elif file_type == "A股招股书":
-        STOP_WORDS = stop_words_dict["zhaogu_sw"]
-    elif file_type == "A股业绩预告":
-        STOP_WORDS = stop_words_dict["yugao_sw"]
-    elif file_type in ["A股半年报", "A股三季报", "A股一季报"]:
-        STOP_WORDS = stop_words_dict["quarter_sw"]
-    else:
-        STOP_WORDS = stop_words_dict["normal_sw"]
-    return STOP_WORDS
-
-
 def create_date_intervals(interval, start_date="2000-01-01", end_date=None):
     """将字符串日期转换为datetime对象"""
     start = datetime.datetime.strptime(start_date, "%Y-%m-%d")
@@ -54,50 +39,6 @@ def retry_on_failure(func):
         print(f'Error: {e}, 暂停 {pause_time} 秒')
         time.sleep(pause_time)
         return retry_on_failure(func)
-
-
-def fill_params(DATA, CATEGORY_AND_NAME, pageNum, file_type, cnInfoColumn, cnInfoCategory, 使用关键词而非巨潮分类):
-    """填充查询参数，
-    DATA = {
-        'pageNum': '',
-        'pageSize': 30,
-        'column': '',
-        'tabName': 'fulltext',
-        'plate': '',
-        'stock': '',
-        'searchkey': '',
-        'secid': '',
-        'category': '',
-        'trade': '',
-        'seDate': '',
-        'sortName': '',
-        'sortType': '',
-        'isHLtitle': 'true'
-    }   
-    """
-    # 确定页码
-    DATA['pageNum'] = pageNum
-    # 确定板块
-    # 根据用户提供的 file_type 参数，从 CATEGORY_AND_NAME 中检索
-    # 或根据用户自定义的 cnInfoColumn 确定
-    try:
-        DATA['column'] = CATEGORY_AND_NAME[file_type][1]
-    except KeyError:
-        DATA['column'] = cnInfoColumn
-    # 确定检索词 和 分类，用于获取名单
-    # 确定检索模式
-    # 如果开启了关键词，就不需要再将检索范围限制到巨潮分类里面了，
-    # 直接用停用词就能筛掉不需要的报告
-    # 如果未开启关键词，必须使用巨潮分类。
-    # 不然的话就相当于什么限制都没有了，效率很低。
-    # 分类也是根据用户提供的 file_type 参数，从 CATEGORY_AND_NAME 中检索
-    # 或根据用户自定义的 cnInfoCategory 确定
-    if 使用关键词而非巨潮分类 == 0:
-        try:
-            DATA['category'] = CATEGORY_AND_NAME[file_type][0]
-        except:
-            DATA['category'] = cnInfoCategory
-    return DATA
 
 
 def get_CSR_tag(title):

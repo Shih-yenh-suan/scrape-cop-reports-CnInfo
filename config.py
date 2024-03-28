@@ -1,31 +1,22 @@
 customer_req = {
-    "file_type": "A股社会责任",
-    "cnInfoColumn": "szse",
-    "cnInfoCategory": "",
-    "root_file_path": "E:\[待整理]Source_for_sale",
+    "file_type": "A股业绩报告",  # 文件类型
+    "root_file_path": "E:\[待整理]Source_for_sale",  # 文件目录
     "使用关键词而非巨潮分类": 1,
-    "开启报告不允许年度重复": 1,
     "start_date": "2023-12-01",  # 起始日期。默认为2000-01-01,
     "end_date": None,  # 结束日期。默认为今天
     "interval": 20,  # 起始日期和结束日期之间的间隔。
-    "reverseInterval": 1,
-    "ifMultiThread": 1,
+    "reverseInterval": 1,  # 从后向前爬
+    "ifMultiThread": 1,  # 多线程
 }
 
 """
 解释：
-
 file_type：
-    指定报告文件的类型。目前有：
-    A股一季报 、 A股年报 、 A股半年报 、 A股三季报 、 A股业绩报告 、 三板年度报告
-    选择上述内容后，将自动填充 DATA 参数中的 板块 和 巨潮分类
-    如果需要新增，则需要在 cnInfoColumn、和 cnInfoCategory 中添加相应的信息
+    指定报告文件的类型。目前允许输入：
+    A股年报 、 A股一季报 、 A股半年报 、 A股三季报 、 三板年度报告
+    A股业绩报告 、 A股问询函 、 A股社会责任 、 A股招股书
+    如果需要新增，则需要在 主函数 中添加相应的信息
 
-cnInfoColumn 和 cnInfoCategory：
-    指定报告文件的板块和巨潮分类
-    在指定了已存在的 file_type 后，这两个变量不生效
-    板块默认填写了 szse 即主板，cnInfoColumn 默认为空
-    
 root_file_path：
     指定下载文件的保存路径为 root_file_path\file_type，同时有
     下载文件的记录表，保存路径为 root_file_path\file_type\file_type.txt
@@ -34,6 +25,8 @@ root_file_path：
     这个数据用于指定在爬取时是按照巨潮分类爬取还是按照人工提供的关键词爬取
     0：不含关键词，此时使用巨潮提供的 category 参数获取下载列表
     1：包含关键词，此时使用人工提供的 SEARCH_KEY_LIST 组成搜索关键词，这个表在constant.py中
+    如果提供的file_type不在上面，则需要在主函数中添加相应的信息；特别地，
+    如果使用关键词，还需要在 constant 中更新关键词
     
 开启报告不允许年度重复：
     这个数据用于指定爬取和更新时的逻辑。
@@ -53,4 +46,6 @@ reverseInterval：
     指定是否将时间序列倒过来，也就是从最近的到最早的。
     适合更新数据时使用。
 
+ifMultiThread:
+    指定是否使用多线程。
 """
