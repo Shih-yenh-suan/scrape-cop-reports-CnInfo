@@ -86,7 +86,7 @@ class FuncScraper:
         if secCode == None:
             secCode = i['orgId'][5:11]
         # 处理文件后缀
-        file_sub = 'html' if i['adjunctType'] == None else 'pdf'
+        file_suffix = 'html' if i['adjunctType'] == None else 'pdf'
         # 处理会计年度
         seYear = re.search(r'20\d{2}', title)
         seYear = str(int(announcementTime[0:4]) -
@@ -98,17 +98,17 @@ class FuncScraper:
             # 对于CSR报告，处理后缀
             csr_tag = get_CSR_tag(title)
             fileShortName = rf'{secCode}_{seYear}_{csr_tag}_{secName}'
-            fileName = rf'{fileShortName}_{title}_{announcementTime}.{file_sub}'
+            fileName = rf'{fileShortName}_{title}_{announcementTime}.{file_suffix}'
         elif self.开启报告不允许年度重复 == 1:
             # 开启报告不允许年度重复时，用企业-年份作为主键
             # 默认从标题中检索年份数据，
             # 如果标题中没说，就从发布日期中减1
             # 因为一年发布一份的报告一般是次年更新，所以年份减1
             fileShortName = f'{secCode}_{seYear}_{secName}'
-            fileName = f'{fileShortName}_{title}_{announcementTime}.{file_sub}'
+            fileName = f'{fileShortName}_{title}_{announcementTime}.{file_suffix}'
         else:
             fileShortName = f'{secCode}_{announcementTime}_{secName}'
-            fileName = f'{fileShortName}_{title}.{file_sub}'
+            fileName = f'{fileShortName}_{title}.{file_suffix}'
 
         # 接下来开始执行下载前的判断
         # 1. 对于标题包含停用词的报告，跳过下载
