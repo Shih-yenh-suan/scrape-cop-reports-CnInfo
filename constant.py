@@ -197,15 +197,15 @@ STOP_WORDS_DICT = {
                    '取消'],
 }
 
+"""
+解释：
+"search_keys": 检索关键词，当 使用关键词而非巨潮分类 为 1 时启用
+"is_duplicate_not_allowed": 1：不允许企业-年度样本有重复，0 反之
+"cn_info_column": 巨潮板块
+"cn_info_category": 巨潮分类
+"stopwords_list": 选择的停用词模块
+"""
 FILE_INFO_JSON = {
-    """
-    解释：
-    "search_keys": 检索关键词，当 使用关键词而非巨潮分类 为 1 时启用
-    "is_duplicate_not_allowed": 1：不允许企业-年度样本有重复，0 反之
-    "cn_info_column": 巨潮板块
-    "cn_info_category": 巨潮分类
-    "stopwords_list": 选择的停用词模块
-    """
     "A股年报": {
         "search_keys": ["年度报告", "年报"],
         "is_duplicate_not_allowed": 1,

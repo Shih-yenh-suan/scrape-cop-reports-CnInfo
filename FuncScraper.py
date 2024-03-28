@@ -4,9 +4,9 @@ import re
 import datetime
 import os
 import tempfile
+import json
 import shutil
 from concurrent.futures import ThreadPoolExecutor
-from config import *
 from constant import *
 from utils import *
 
@@ -21,9 +21,9 @@ class FuncScraper:
         self.interval = customer_req["interval"]
         self.reverseInterval = customer_req["reverseInterval"]
         self.ifMultiThread = customer_req["ifMultiThread"]
-        self.is_duplicate_not_allowed = FILE_INFO_JSON["file_type"]["is_duplicate_not_allowed"]
-        self.cnInfoColumn = FILE_INFO_JSON["file_type"]["cn_info_column"]
-        self.cnInfoCategory = FILE_INFO_JSON["file_type"]["cn_info_category"]
+        self.is_duplicate_not_allowed = FILE_INFO_JSON[self.file_type]["is_duplicate_not_allowed"]
+        self.cnInfoColumn = FILE_INFO_JSON[self.file_type]["cn_info_column"]
+        self.cnInfoCategory = FILE_INFO_JSON[self.file_type]["cn_info_category"]
 
     def process_page_for_downloads(self, pageNum):
         """处理指定页码的公告信息并下载相关文件"""
@@ -106,7 +106,7 @@ class FuncScraper:
 
         # 2. 如果要求标题中带有关键词，则跳过下载不包含关键词的报告
         if self.使用关键词而非巨潮分类 == 1:
-            if not any(re.search(k, title) for k in FILE_INFO_JSON[customer_req["file_type"]]["search_keys"]):
+            if not any(re.search(k, title) for k in FILE_INFO_JSON[self.file_type]["search_keys"]):
                 print(f'{fileShortName}：\t不含关键词 ({title})')
                 return
 
