@@ -1,3 +1,4 @@
+import jieba
 URL = 'http://www.cninfo.com.cn/new/hisAnnouncement/query'
 HEADERS = {
     'Accept': '*/*',
@@ -268,5 +269,12 @@ FILE_INFO_JSON = {
         "cn_info_column": "szse",
         "cn_info_category": "category_yjygjxz_szsh",
         "stopwords_list": STOP_WORDS_DICT["yugao_sw"]
+    },
+    "A股董事会工作报告": {
+        "search_keys": ["董事会工作报告"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "szse",
+        "cn_info_category": "",
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
     },
 }
