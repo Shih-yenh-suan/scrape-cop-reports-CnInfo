@@ -137,8 +137,9 @@ class FuncScraper:
 
         # 5. 在不允许年度重复的情况下，对于没有记录但是已经有同一代码、同一时间报告的文件，比对日期，如果日期更新则下载，否则不下载
         if self.is_duplicate_not_allowed == 1:
-            compare_latest_report(
-                downloaded_files, announcementTime, fileShortName)
+            if compare_latest_report(
+                    downloaded_files, announcementTime, fileShortName[:11]) == False:
+                return
         # 6. 一切都符合要求，分块下载文件，并只在下载完成后才保存到本地
         try:
             with requests.get(downloadUrl, stream=True) as r:

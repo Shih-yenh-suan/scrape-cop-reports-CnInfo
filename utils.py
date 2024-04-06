@@ -89,5 +89,5 @@ def compare_latest_report(downloaded_files, announcementTime, fileShortName):
         if time_of_downloading_file - time_in_downloaded_files <= datetime.timedelta(days=1):
             print(
                 f'{fileShortName}：\t有新版不下载:{str(time_in_downloaded_files)[:10]}')
-            return
+            return False
         print(f'{fileShortName}：\t需要更新:{time_in_downloaded_files}')
