@@ -44,8 +44,9 @@ def retry_on_failure(func):
 
 def get_CSR_tag(title):
     csr_dict = ["社会责任", "CSR"]
-    esg_dict = ["ESG", "环境", "管治", "治理"]
+    esg_dict = ["ESG", "管治", "治理"]
     sd_dict = ["可持续"]
+    env_dict = ["环境报告书"]
     tags = []
     for csr_word in csr_dict:
         if csr_word in title:
@@ -58,6 +59,10 @@ def get_CSR_tag(title):
     for sd_word in sd_dict:
         if sd_word in title:
             tags.append("#SD")
+            break
+    for env_dict in env_dict:
+        if env_dict in title:
+            tags.append("#ENV")
             break
     return ''.join(tags)
 

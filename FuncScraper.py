@@ -87,6 +87,8 @@ class FuncScraper:
         if any(word in self.file_type for word in ["社会责任", "ESG", "CSR"]):
             # 对于CSR报告，处理后缀
             csr_tag = get_CSR_tag(title)
+            if csr_tag == "":
+                return
             fileShortName = rf'{secCode}_{seYear}_{csr_tag}_{secName}'
             fileName = rf'{fileShortName}_{title}_{announcementTime}.{file_suffix}'
         elif self.is_duplicate_not_allowed == 1:
