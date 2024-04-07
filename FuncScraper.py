@@ -4,7 +4,6 @@ import re
 import datetime
 import os
 import tempfile
-import json
 import shutil
 from concurrent.futures import ThreadPoolExecutor
 from constant import *
@@ -15,6 +14,7 @@ class FuncScraper:
     def __init__(self, customer_req):
         self.file_type = customer_req["file_type"]
         self.root_file_path = customer_req["root_file_path"]
+        self.file_download = customer_req["file_download"]
         self.使用关键词而非巨潮分类 = customer_req["使用关键词而非巨潮分类"]
         self.start_date = customer_req["start_date"]
         self.end_date = customer_req["end_date"]
@@ -42,8 +42,8 @@ class FuncScraper:
             print(f"第 {pageNum} 页已无内容或超出最大页数，退出")
             return False
 
-        # 决定是否开启多线程
-        if self.ifMultiThread == 1:
+        # 决定是否开启多线程：仅在选择多线程且为下载文件模式时才启用
+        if self.ifMultiThread == 1 and self.file_download == 1:
             # 开启多线程处理
             print(f'多线程处理第 {pageNum} 页，共 {maxpage} 页')
             with ThreadPoolExecutor(max_workers=20) as executor:
@@ -140,22 +140,15 @@ class FuncScraper:
             if compare_latest_report(
                     downloaded_files, announcementTime, fileShortName[:11]) == False:
                 return
-        # 6. 一切都符合要求，分块下载文件，并只在下载完成后才保存到本地
-        try:
-            with requests.get(downloadUrl, stream=True) as r:
-                r.raise_for_status()
-                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        if chunk:
-                            tmp_file.write(chunk)
-                    temp_name = tmp_file.name
-            shutil.move(temp_name, filePath)
-            print(f'{fileShortName}：\t已下载到 {filePath}')
-            # 下载完成后，保存文件名到记录中。
-            with open(LOCK_FILE_PATH, 'a', encoding='utf-8', errors='ignore') as lock_file:
-                lock_file.write(f'{fileName}\n')
-        except Exception as e:
-            print(f'{fileShortName}： \t下载失败: {e}')
+        # 6. 一切都符合要求，下载文件或保存文件到本地
+        if self.file_download == 1:
+            download_file(downloadUrl, filePath, fileShortName,
+                          LOCK_FILE_PATH, fileName)
+        elif self.file_download == 0:
+            save_to_csv(downloadUrl, fileName, fileShortName,
+                        self.root_file_path, self.file_type)
+        else:
+            raise ValueError("file_download参数错误")
 
     def CircleScrape(self, DATA_RANGE):
         for i, seDate in enumerate(DATA_RANGE):

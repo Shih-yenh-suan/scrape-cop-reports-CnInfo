@@ -2,6 +2,11 @@ import datetime
 import time
 import re
 from constant import *
+import requests
+import shutil
+import tempfile
+import pandas as pd
+import os
 
 
 def create_date_intervals(interval, start_date="2000-01-01", end_date=None):
@@ -91,3 +96,65 @@ def compare_latest_report(downloaded_files, announcementTime, fileShortName):
                 f'{fileShortName}：\t有新版不下载:{str(time_in_downloaded_files)[:10]}')
             return False
         print(f'{fileShortName}：\t需要更新:{time_in_downloaded_files}')
+
+
+def download_file(downloadUrl, filePath, fileShortName, LOCK_FILE_PATH, fileName):
+    """分块下载文件，并只在下载完成后才保存到本地"""
+    try:
+        with requests.get(downloadUrl, stream=True) as r:
+            r.raise_for_status()
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                for chunk in r.iter_content(chunk_size=8192):
+                    if chunk:
+                        tmp_file.write(chunk)
+                temp_name = tmp_file.name
+        shutil.move(temp_name, filePath)
+        print(f'{fileShortName}：\t已下载到 {filePath}')
+        # 下载完成后，保存文件名到记录中。
+        with open(LOCK_FILE_PATH, 'a', encoding='utf-8', errors='ignore') as lock_file:
+            lock_file.write(f'{fileName}\n')
+    except Exception as e:
+        print(f'{fileShortName}： \t下载失败: {e}')
+
+
+def save_to_csv(downloadUrl, fileName, fileShortName, root_file_path, file_type):
+    # 从fileName中获取内容
+    fileName = os.path.splitext(fileName)[0]
+    # 分列文件名，获取各个列
+    split_name = fileName.split('_')
+
+    # 根据分列的结果来决定列名和是否继续
+    if len(split_name) == 6:
+        column_names = ['股票代码', '年份', '类型', '股票简称', '文件标题', '发布日期']
+    elif len(split_name) == 5:
+        column_names = ['股票代码', '年份', '股票简称', '文件标题', '发布日期']
+    elif len(split_name) == 4:
+        column_names = ['股票代码', '发布日期', '股票简称', '文件标题']
+    else:
+        print("文件名分列结果不符合要求，跳过。")
+        return
+    new_entry = dict(zip(column_names, split_name))
+    new_entry['下载链接'] = downloadUrl
+
+    # 检查CSV文件是否存在，如果存在就加载，否则创建一个空的DataFrame
+    csv_filename = f'{root_file_path}\{file_type}\{file_type}.csv'
+    if not os.path.exists(csv_filename):
+        df = pd.DataFrame(columns=new_entry.keys())
+        df.to_csv(csv_filename, index=False)
+    df = pd.read_csv(csv_filename, encoding='utf-8-sig',
+                     encoding_errors="ignore", dtype=str)
+    # 检查文件是否存在。在这里可以用链接作为主键
+    if downloadUrl in df['下载链接'].values:
+        print("链接已存在，跳过下载。")
+        return
+
+    # 将新的文件名和下载链接添加到DataFrame中
+    df = pd.DataFrame([new_entry], columns=new_entry.keys())
+
+    # 将DataFrame保存到CSV文件中
+    df.to_csv(csv_filename, mode='a', header=False, index=False)
+    print(f'{fileShortName}：\t已保存记录')
+
+
+# 使用示例
+# save_to_csv('example_file.txt', 'http://example.com/download/link')
