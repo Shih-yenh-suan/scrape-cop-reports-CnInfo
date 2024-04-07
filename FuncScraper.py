@@ -59,6 +59,7 @@ class FuncScraper:
         # 处理标题
         title = i['announcementTitle']
         title = re.sub(r'(<em>|</em>|[\/:*?"<>| ])', '', title)
+        title = re.sub(r'_', '-', title)
         # 获取下载链接
         downloadUrl = 'http://static.cninfo.com.cn/' + i['adjunctUrl']
         # 处理时间
@@ -71,6 +72,7 @@ class FuncScraper:
         secName = re.sub(r'(<em>|</em>|em|[\/:*?"<>| ])', '', secName)
         secName = re.sub(r'Ａ', 'A', secName)
         secName = re.sub(r'Ｂ', 'B', secName)
+        secName = re.sub(r'_', '-', secName)
         # 处理代码。如果代码为空，则从企业唯一的id获得
         secCode = i['secCode']
         if secCode == None:
