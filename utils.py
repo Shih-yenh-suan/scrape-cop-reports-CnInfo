@@ -145,7 +145,7 @@ def save_to_csv(downloadUrl, fileName, fileShortName, root_file_path, file_type)
                      encoding_errors="ignore", dtype=str)
     # 检查文件是否存在。在这里可以用链接作为主键
     if downloadUrl in df['下载链接'].values:
-        print("链接已存在，跳过下载。")
+        print(f'{fileShortName}：\t链接已存在')
         return
 
     # 将新的文件名和下载链接添加到DataFrame中
