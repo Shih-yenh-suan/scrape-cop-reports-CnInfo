@@ -187,7 +187,35 @@ STOP_WORDS_DICT = {
                    'eport',
                    '更正的公告',
                    '预告',
-                   '审阅',
+                   '权益分派',
+                   '提示',
+                   '持续督导',
+                   '减值',
+                   '关联交易',
+                   '转股',
+                   '预案',
+                   '意见',
+                   '关于更正',
+                   '无法',
+                   '不能',
+                   '不披露',
+                   '未披露',
+                   '未及时',
+                   '延期',
+                   '说明',
+                   '关于收到'
+                   '检查',
+                   '的公告',
+                   '声明公告',
+                   '审议通过',
+                   '进展公告',
+                   '次会议',
+                   '内部控制',
+                   '专项报告',
+                   '整改',
+                   '声明',
+                   '风险',
+                   '分红派息',
                    '简报',
                    '更正公告',
                    '补充公告',
@@ -222,7 +250,7 @@ FILE_INFO_JSON = {
         "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
     },
     "A股半年报": {
-        "search_keys": ["半年"],
+        "search_keys": ["半年", "中期"],
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "szse",
         "cn_info_category": "category_bndbg_szsh",
@@ -240,13 +268,6 @@ FILE_INFO_JSON = {
         "is_duplicate_not_allowed": 0,
         "cn_info_column": "szse",
         "cn_info_category": "",
-        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
-    },
-    "三板年报": {
-        "search_keys": ["年度报告", "年报"],
-        "is_duplicate_not_allowed": 1,
-        "cn_info_column": "third",
-        "cn_info_category": "category_dqgg",
         "stopwords_list": STOP_WORDS_DICT["normal_sw"]
     },
     "A股问询函": {
@@ -276,5 +297,33 @@ FILE_INFO_JSON = {
         "cn_info_column": "szse",
         "cn_info_category": "",
         "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+    },
+    "三板年报": {
+        "search_keys": ["年度报告", "年报"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "third",
+        "cn_info_category": "category_dqgg",
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+    },
+    "三板一季报": {
+        "search_keys": ["一季度"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "third",
+        "cn_info_category": "category_dqgg",
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+    },
+    "三板半年报": {
+        "search_keys": ["半年", "中期"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "third",
+        "cn_info_category": "category_dqgg",
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+    },
+    "三板三季报": {
+        "search_keys": ["三季度"],
+        "is_duplicate_not_allowed": 1,
+        "cn_info_column": "third",
+        "cn_info_category": "category_dqgg",
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
     },
 }
