@@ -35,6 +35,7 @@ DATA = {
 }
 STOP_WORDS_DICT = {
     "normal_sw":  ['摘要',
+                   '票据',
                    '英文',
                    '回复',
                    '细则',
@@ -182,6 +183,7 @@ STOP_WORDS_DICT = {
                   '规程'],
     "wenxun_sw": ['延期', '提示'],
     "quarter_sw": ['摘要',
+                   '票据',
                    '报表',
                    '业绩',
                    'eport',
