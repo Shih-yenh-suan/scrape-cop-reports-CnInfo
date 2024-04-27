@@ -36,6 +36,8 @@ DATA = {
 STOP_WORDS_DICT = {
     "normal_sw":  ['摘要',
                    '票据',
+                   '分红',
+                   '电量',
                    '英文',
                    '回复',
                    '细则',
@@ -184,6 +186,8 @@ STOP_WORDS_DICT = {
     "wenxun_sw": ['延期', '提示'],
     "quarter_sw": ['摘要',
                    '票据',
+                   '分红',
+                   '电量',
                    '报表',
                    '业绩',
                    'eport',
