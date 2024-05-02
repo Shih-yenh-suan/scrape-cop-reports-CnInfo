@@ -36,6 +36,7 @@ DATA = {
 STOP_WORDS_DICT = {
     "normal_sw":  ['摘要',
                    '票据',
+                   '条例',
                    '分红',
                    '电量',
                    '英文',
