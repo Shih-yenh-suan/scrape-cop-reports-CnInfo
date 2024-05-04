@@ -231,6 +231,25 @@ STOP_WORDS_DICT = {
                    '英文',
                    '营数据',
                    '取消'],
+    "dudao": [
+        '制度',
+        '计划',
+        '细则',
+        '管理制',
+        '办法',
+        '变更',
+        '细则',
+        '开通',
+        '成立',
+        '联系',
+        '提示',
+        '专线',
+        '设立',
+        '法律',
+        '通知',
+        '名单',
+        '演示文稿',
+    ]
 }
 
 """
@@ -298,12 +317,13 @@ FILE_INFO_JSON = {
         "cn_info_category": "category_yjygjxz_szsh",
         "stopwords_list": STOP_WORDS_DICT["yugao_sw"]
     },
-    "A股董事会工作报告": {
-        "search_keys": ["董事会工作报告"],
-        "is_duplicate_not_allowed": 1,
+    "A股投资者关系活动": {
+        "search_keys": ["投资者关系"],
+        "is_duplicate_not_allowed": 0,
         "cn_info_column": "szse",
         "cn_info_category": "",
-        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+        "tabName": "relation",
+        "stopwords_list": STOP_WORDS_DICT["dudao"]
     },
     "三板年报": {
         "search_keys": ["年度报告", "年报"],

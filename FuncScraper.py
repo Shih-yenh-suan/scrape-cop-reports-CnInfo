@@ -26,11 +26,17 @@ class FuncScraper:
         self.cnInfoCategory = FILE_INFO_JSON[self.file_type]["cn_info_category"]
         self.must_contain_word = list(set(
             word for item in FILE_INFO_JSON[self.file_type]["search_keys"] for word in jieba.lcut(item)))
+        try:
+            self.tabName = FILE_INFO_JSON[self.file_type]["tabName"]
+        except:
+            self.tabName = "fulltext"
 
     def process_page_for_downloads(self, pageNum):
         """处理指定页码的公告信息并下载相关文件"""
         DATA['pageNum'] = pageNum
         DATA['column'] = self.cnInfoColumn
+        if self.tabName != "fulltext":
+            DATA["tabName"] = self.tabName
         if self.使用关键词而非巨潮分类 == 0:
             DATA['category'] = self.cnInfoCategory
         # 向网站获取内容和总页数，必须分开获取，否则容易报错
@@ -78,7 +84,7 @@ class FuncScraper:
         if secCode == None:
             secCode = i['orgId'][5:11]
         # 处理文件后缀
-        file_suffix = 'html' if i['adjunctType'] == None else 'pdf'
+        file_suffix = i['adjunctUrl'].split(".")[1].lower()
         # 处理会计年度
         seYear = re.search(r'20\d{2}', title)
         seYear = str(int(announcementTime[0:4]) -
