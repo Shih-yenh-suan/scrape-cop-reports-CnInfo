@@ -25,7 +25,7 @@ class FuncScraper:
         self.cnInfoColumn = FILE_INFO_JSON[self.file_type]["cn_info_column"]
         self.cnInfoCategory = FILE_INFO_JSON[self.file_type]["cn_info_category"]
         self.must_contain_word = list(set(
-            word for item in FILE_INFO_JSON[self.file_type]["search_keys"] for word in jieba.lcut(item)))
+            item for item in FILE_INFO_JSON[self.file_type]["search_keys"]))
         try:
             self.tabName = FILE_INFO_JSON[self.file_type]["tabName"]
         except:
