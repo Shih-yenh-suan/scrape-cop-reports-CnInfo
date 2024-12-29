@@ -1,3 +1,13 @@
+import argparse
+import datetime
+import time
+import re
+import requests
+import os
+import shutil
+import tempfile
+import pandas as pd
+from concurrent.futures import ThreadPoolExecutor
 import jieba
 URL = 'http://www.cninfo.com.cn/new/hisAnnouncement/query'
 HEADERS = {
@@ -346,99 +356,73 @@ FILE_INFO_JSON = {
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "szse",
         "cn_info_category": "category_ndbg_szsh",
-        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"],
+        "use_keyword": 0
     },
     "A股一季报": {
         "search_keys": ["一季度"],
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "szse",
         "cn_info_category": "category_yjdbg_szsh",
-        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"],
+        "use_keyword": 0
     },
     "A股半年报": {
         "search_keys": ["半年", "中期"],
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "szse",
         "cn_info_category": "category_bndbg_szsh",
-        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"],
+        "use_keyword": 0
     },
     "A股三季报": {
         "search_keys": ["三季度"],
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "szse",
         "cn_info_category": "category_sjdbg_szsh",
-        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+        "stopwords_list": STOP_WORDS_DICT["quarter_sw"],
+        "use_keyword": 0
     },
     "A股社会责任": {
         "search_keys": ["社会责任", "环境报告书", "ESG", "管治", "治理", "可持续发展"],
         "is_duplicate_not_allowed": 0,
         "cn_info_column": "szse",
         "cn_info_category": "",
-        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"],
+        "use_keyword": 1
     },
     "A股问询函": {
         "search_keys": ["问询", "回复", "回函"],
         "is_duplicate_not_allowed": 0,
         "cn_info_column": "szse",
         "cn_info_category": "",
-        "stopwords_list": STOP_WORDS_DICT["wenxun_sw"]
+        "stopwords_list": STOP_WORDS_DICT["wenxun_sw"],
+        "use_keyword": 1
     },
     "A股招股书": {
         "search_keys": ["招股说明书", "招股意向书"],
         "is_duplicate_not_allowed": 0,
         "cn_info_column": "szse",
         "cn_info_category": "",
-        "stopwords_list": STOP_WORDS_DICT["zhaogu_sw"]
-    },
-    "A股业绩报告": {
-        "search_keys": ["预告", "快报"],
-        "is_duplicate_not_allowed": 0,
-        "cn_info_column": "szse",
-        "cn_info_category": "category_yjygjxz_szsh",
-        "stopwords_list": STOP_WORDS_DICT["yugao_sw"]
-    },
-    "A股投资者关系活动": {
-        "search_keys": ["投资者关系"],
-        "is_duplicate_not_allowed": 0,
-        "cn_info_column": "szse",
-        "cn_info_category": "",
-        "tabName": "relation",
-        "stopwords_list": STOP_WORDS_DICT["dudao"]
+        "stopwords_list": STOP_WORDS_DICT["zhaogu_sw"],
+        "use_keyword": 1
     },
     "三板年报": {
         "search_keys": ["年度报告", "年报"],
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "third",
         "cn_info_category": "category_dqgg",
-        "stopwords_list": STOP_WORDS_DICT["normal_sw"]
-    },
-    "三板一季报": {
-        "search_keys": ["一季度"],
-        "is_duplicate_not_allowed": 1,
-        "cn_info_column": "third",
-        "cn_info_category": "category_dqgg",
-        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
-    },
-    "三板半年报": {
-        "search_keys": ["半年", "中期"],
-        "is_duplicate_not_allowed": 1,
-        "cn_info_column": "third",
-        "cn_info_category": "category_dqgg",
-        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
-    },
-    "三板三季报": {
-        "search_keys": ["三季度"],
-        "is_duplicate_not_allowed": 1,
-        "cn_info_column": "third",
-        "cn_info_category": "category_dqgg",
-        "stopwords_list": STOP_WORDS_DICT["quarter_sw"]
+        "stopwords_list": STOP_WORDS_DICT["normal_sw"],
+        "use_keyword": 0
     },
     "A股内部控制评价报告": {
         "search_keys": ["内部控制评价报告", "内部控制自我评价报告"],
         "is_duplicate_not_allowed": 1,
         "cn_info_column": "szse",
         "cn_info_category": "",
-        "stopwords_list": STOP_WORDS_DICT["A股内部控制评价报告"]
+        "stopwords_list": STOP_WORDS_DICT["A股内部控制评价报告"],
+        "use_keyword": 1
+
     },
 
 }

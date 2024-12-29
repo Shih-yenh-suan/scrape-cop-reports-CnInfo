@@ -1,11 +1,4 @@
 # -*- encoding: utf-8 -*-
-import requests
-import re
-import datetime
-import os
-import tempfile
-import shutil
-from concurrent.futures import ThreadPoolExecutor
 from constant import *
 from utils import *
 
@@ -15,29 +8,22 @@ class FuncScraper:
         self.file_type = customer_req["file_type"]
         self.root_file_path = customer_req["root_file_path"]
         self.file_download = customer_req["file_download"]
-        self.使用关键词而非巨潮分类 = customer_req["使用关键词而非巨潮分类"]
         self.start_date = customer_req["start_date"]
         self.end_date = customer_req["end_date"]
         self.interval = customer_req["interval"]
-        self.reverseInterval = customer_req["reverseInterval"]
-        self.ifMultiThread = customer_req["ifMultiThread"]
+        self.workers = customer_req["workers"]
+        self.use_keywords = FILE_INFO_JSON[self.file_type]["use_keyword"]
         self.is_duplicate_not_allowed = FILE_INFO_JSON[self.file_type]["is_duplicate_not_allowed"]
         self.cnInfoColumn = FILE_INFO_JSON[self.file_type]["cn_info_column"]
         self.cnInfoCategory = FILE_INFO_JSON[self.file_type]["cn_info_category"]
         self.must_contain_word = list(set(
             item for item in FILE_INFO_JSON[self.file_type]["search_keys"]))
-        try:
-            self.tabName = FILE_INFO_JSON[self.file_type]["tabName"]
-        except:
-            self.tabName = "fulltext"
 
     def process_page_for_downloads(self, pageNum):
         """处理指定页码的公告信息并下载相关文件"""
         DATA['pageNum'] = pageNum
         DATA['column'] = self.cnInfoColumn
-        if self.tabName != "fulltext":
-            DATA["tabName"] = self.tabName
-        if self.使用关键词而非巨潮分类 == 0:
+        if self.use_keywords == 0:
             DATA['category'] = self.cnInfoCategory
         # 向网站获取内容和总页数，必须分开获取，否则容易报错
         result = retry_on_failure(lambda:
@@ -49,23 +35,19 @@ class FuncScraper:
             return False
 
         # 决定是否开启多线程：仅在选择多线程且为下载文件模式时才启用
-        if self.ifMultiThread == 1 and self.file_download == 1:
+        if self.file_download == 1:
             # 开启多线程处理
             print(f'多线程处理第 {pageNum} 页，共 {maxpage} 页')
-            with ThreadPoolExecutor(max_workers=20) as executor:
+            with ThreadPoolExecutor(max_workers=self.workers) as executor:
                 executor.map(self.process_announcements, result)
             return True
-        else:
-            print(f'单线程处理第 {pageNum} 页，共 {maxpage} 页')
-            for i in result:
-                self.process_announcements(i)
 
     def process_announcements(self, i):
         """处理返回的json文件"""
         # 处理标题
         title = i['announcementTitle']
         title = re.sub(r'(<em>|</em>|[\/:*?"<>| ])', '', title)
-        title = re.sub(r'_', '-', title)
+        title = re.sub(r'_', '-', title)  # 将下划线改掉，防止与标题中新增的下划线冲突。
         # 获取下载链接
         downloadUrl = 'http://static.cninfo.com.cn/' + i['adjunctUrl']
         # 处理时间
@@ -117,7 +99,7 @@ class FuncScraper:
             return
 
         # 2. 如果要求标题中带有关键词，则跳过下载不包含关键词的报告
-        if self.使用关键词而非巨潮分类 == 1:
+        if self.use_keywords == 1:
             if not any(re.search(k, title) for k in self.must_contain_word):
                 print(f'{fileShortName}：\t不含关键词 ({title})')
                 return
@@ -170,5 +152,16 @@ class FuncScraper:
                 if pageNum >= 500:
                     break
                 pageNum += 1
-            if seDate[3] != seDate[14]:
-                print(f'{seDate[:4]} 年的年报已下载完毕.')
+
+
+def main(customer_req):
+    DATA_RANGE = create_date_intervals(
+        customer_req["interval"], customer_req["start_date"], customer_req["end_date"])
+    if FILE_INFO_JSON[customer_req["file_type"]]["use_keyword"] == 1:
+        for searchkey in FILE_INFO_JSON[customer_req["file_type"]]["search_keys"]:
+            print(f"当前检索关键词：{searchkey}")
+            DATA['searchkey'] = searchkey
+            FuncScraper(customer_req).CircleScrape(DATA_RANGE)
+    else:
+        FuncScraper(customer_req).CircleScrape(DATA_RANGE)
+    print('下载完毕')
