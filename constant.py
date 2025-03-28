@@ -422,7 +422,14 @@ FILE_INFO_JSON = {
         "cn_info_category": "",
         "stopwords_list": STOP_WORDS_DICT["A股内部控制评价报告"],
         "use_keyword": 1
-
+    },
+    "三板公转书": {
+        "search_keys": ["公开转让说明书"],
+        "is_duplicate_not_allowed": 0,
+        "cn_info_column": "third",
+        "cn_info_category": "",
+        "stopwords_list": STOP_WORDS_DICT["zhaogu_sw"],
+        "use_keyword": 1
     },
 
 }
